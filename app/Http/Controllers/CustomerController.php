@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Http\Requests\CustomerRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -29,20 +30,9 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email',
-            'phone' => 'nullable|string|max:20',
-            'cpf_cnpj' => 'required|string|unique:customers,cpf_cnpj',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:50',
-            'zip_code' => 'required|string|max:10'
-        ]);
-
-        Customer::create($validated);
+        $customer = Customer::create($request->validated());
 
         return redirect()->route('customers.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
@@ -66,20 +56,9 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Customer $customer)
+    public function update(CustomerRequest $request, Customer $customer)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $customer->id,
-            'phone' => 'nullable|string|max:20',
-            'cpf_cnpj' => 'required|string|unique:customers,cpf_cnpj,' . $customer->id,
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:50',
-            'zip_code' => 'required|string|max:10'
-        ]);
-
-        $customer->update($validated);
+        $customer->update($request->validated());
 
         return redirect()->route('customers.index')->with('success', 'Cliente atualizado com sucesso!');
     }

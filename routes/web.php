@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('customers', CustomerController::class);
     Route::resource('suppliers', SupplierController::class);
+    Route::get('/suppliers/cities', [SupplierController::class, 'getCities'])->name('suppliers.cities');
 });
 
 require __DIR__.'/auth.php';

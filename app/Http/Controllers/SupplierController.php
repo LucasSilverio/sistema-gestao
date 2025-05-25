@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SupplierRequest;
+use App\Models\City;
+use App\Models\State;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -13,7 +15,7 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::latest()->paginate(10);
+        $suppliers = Supplier::with(['state', 'city'])->latest()->paginate(10);
         return view('suppliers.index', compact('suppliers'));
     }
 
@@ -22,7 +24,8 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('suppliers.create');
+        $states = State::orderBy('name')->get();
+        return view('suppliers.create', compact('states'));
     }
 
     /**
@@ -42,6 +45,7 @@ class SupplierController extends Controller
      */
     public function show(Supplier $supplier)
     {
+        $supplier->load(['state', 'city']);
         return view('suppliers.show', compact('supplier'));
     }
 
@@ -50,7 +54,9 @@ class SupplierController extends Controller
      */
     public function edit(Supplier $supplier)
     {
-        return view('suppliers.edit', compact('supplier'));
+        $states = State::orderBy('name')->get();
+        $cities = City::where('state_id', $supplier->state_id)->orderBy('name')->get();
+        return view('suppliers.edit', compact('supplier', 'states', 'cities'));
     }
 
     /**
@@ -75,5 +81,14 @@ class SupplierController extends Controller
         return redirect()
             ->route('suppliers.index')
             ->with('success', 'Fornecedor excluído com sucesso!');
+    }
+
+    public function getCities(Request $request)
+    {
+        $cities = City::where('state_id', $request->state_id)
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($cities);
     }
 }

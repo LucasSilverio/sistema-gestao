@@ -30,8 +30,8 @@ class SupplierRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
             'cnpj' => ['required', 'string', Rule::unique('suppliers')->ignore($supplierId)],
             'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:50'],
+            'state_id' => ['required', 'exists:states,id'],
+            'city_id' => ['required', 'exists:cities,id'],
             'zip_code' => ['required', 'string', 'max:10']
         ];
     }
@@ -54,10 +54,10 @@ class SupplierRequest extends FormRequest
             'cnpj.unique' => 'Este CNPJ já está em uso',
             'address.required' => 'O endereço é obrigatório',
             'address.max' => 'O endereço não pode ter mais de :max caracteres',
-            'city.required' => 'A cidade é obrigatória',
-            'city.max' => 'A cidade não pode ter mais de :max caracteres',
-            'state.required' => 'O estado é obrigatório',
-            'state.max' => 'O estado não pode ter mais de :max caracteres',
+            'state_id.required' => 'O estado é obrigatório',
+            'state_id.exists' => 'O estado selecionado é inválido',
+            'city_id.required' => 'A cidade é obrigatória',
+            'city_id.exists' => 'A cidade selecionada é inválida',
             'zip_code.required' => 'O CEP é obrigatório',
             'zip_code.max' => 'O CEP não pode ter mais de :max caracteres'
         ];
